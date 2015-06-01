@@ -69,10 +69,7 @@ class recognizer(object):
         rospy.Service("~start", Empty, self.start)
         rospy.Service("~stop", Empty, self.stop)
 
-        if rospy.has_param(self._lm_param) and rospy.has_param(self._dic_param):
-            self.start_recognizer()
-        else:
-            rospy.logwarn("lm and dic parameters need to be set to start recognizer.")
+        self.start_recognizer()
 
     def start_recognizer(self):
         rospy.loginfo("Starting recognizer... ")
