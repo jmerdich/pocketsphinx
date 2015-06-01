@@ -5,6 +5,7 @@ recognizer.py is a wrapper for pocketsphinx.
   parameters:
     ~lm - filename of language model
     ~dict - filename of dictionary
+    ~fsg - filename of finite state grammar
     ~mic_name - set the pulsesrc device name for the microphone input.
                 e.g. a Logitech G35 Headset has the following device name: alsa_input.usb-Logitech_Logitech_G35_Headset-00-Headset_1.analog-mono
                 To list audio device info on your machine, in a terminal type: pacmd list-sources
@@ -43,6 +44,7 @@ class recognizer(object):
         self._device_name_param = "~mic_name"  # Find the name of your microphone by typing pacmd list-sources in the terminal
         self._lm_param = "~lm"
         self._dic_param = "~dict"
+        self._fsg_param = "~fsg"
 
         # Configure mics with gstreamer launch config
         if rospy.has_param(self._device_name_param):
@@ -84,18 +86,15 @@ class recognizer(object):
         # Configure language model
         if rospy.has_param(self._lm_param):
             lm = rospy.get_param(self._lm_param)
-        else:
-            rospy.logerr('Recognizer not started. Please specify a language model file.')
-            return
+            self.asr.set_property('lm', lm)
 
         if rospy.has_param(self._dic_param):
             dic = rospy.get_param(self._dic_param)
-        else:
-            rospy.logerr('Recognizer not started. Please specify a dictionary.')
-            return
+            self.asr.set_property('dict', dic)
 
-        self.asr.set_property('lm', lm)
-        self.asr.set_property('dict', dic)
+        if rospy.has_param(self._fsg_param):
+            fsg = rospy.get_param(self._fsg_param)
+            self.asr.set_property('fsg', fsg)
 
         self.bus = self.pipeline.get_bus()
         self.bus.add_signal_watch()
