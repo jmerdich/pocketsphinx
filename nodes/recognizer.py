@@ -80,7 +80,6 @@ class recognizer(object):
         self.asr = self.pipeline.get_by_name('asr')
         self.asr.connect('partial_result', self.asr_partial_result)
         self.asr.connect('result', self.asr_result)
-        self.asr.set_property('configured', True)
         self.asr.set_property('dsratio', 1)
 
         # Configure language model
@@ -99,6 +98,7 @@ class recognizer(object):
         self.bus = self.pipeline.get_bus()
         self.bus.add_signal_watch()
         self.bus_id = self.bus.connect('message::application', self.application_message)
+       # self.asr.set_property('hmm', "/usr/share/pocketsphinx/model/en_US/hub4wsj_sc_8k/")
         self.pipeline.set_state(gst.STATE_PLAYING)
         self.started = True
 
